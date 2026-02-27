@@ -1,115 +1,108 @@
-import React, { useState, useMemo } from 'react';
-import { Activity, Droplets, Fish, Info, Leaf, Scale, TrendingUp, AlertCircle } from 'lucide-react';
-import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import React, { useState } from 'react';
+import { LayoutDashboard, Maximize, Map, Fish, ArrowRight, Info, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { DigestateParams, AgronomicParams, MixtureParams, BiomassParams, CalculationResults } from './types';
+import AppSpreading from './AppSpreading';
+import AppArea from './AppArea';
 
-export default function AppSpreading() {
-  const [digestate, setDigestate] = useState<DigestateParams>({ tsPercent: 3.4, nTotPercentTS: 4.1 });
-  const [agronomic, setAgronomic] = useState<AgronomicParams>({ maxNitrogenLoad: 170, singleInterventionLoad: 40 });
-  const [mixture, setMixture] = useState<MixtureParams>({ rRatio: 10, tsInoculum: 5.5, vsInoculum: 4.1, tsSludge: 1.2, vsSludge: 0.9 });
-  const [biomass, setBiomass] = useState<BiomassParams>({ sludgeProductionRate: 0.12, fcr: 1.1 });
+type AppMode = 'spreading' | 'area' | 'home';
 
-  const results = useMemo(() => {
-    const tsGL = digestate.tsPercent * 10;
-    const nTotGL = (tsGL * digestate.nTotPercentTS) / 100;
-    const mtTons = nTotGL > 0 ? agronomic.maxNitrogenLoad / nTotGL : 0;
-    const minInterventions = agronomic.singleInterventionLoad > 0 ? mtTons / agronomic.singleInterventionLoad : 0;
-    const mtKg = mtTons * 1000;
-    const msKg = mixture.vsInoculum > 0 ? mtKg / (1 + (mixture.rRatio * mixture.vsSludge) / mixture.vsInoculum) : 0;
-    const miKg = mtKg - msKg;
-    const totalTsSludge = (msKg * mixture.tsSludge) / 100;
-    const totalBiomass = (biomass.sludgeProductionRate > 0 && biomass.fcr > 0) ? (totalTsSludge / biomass.sludgeProductionRate) / biomass.fcr : 0;
-    return { tsGL, nTotGL, mtTons, minInterventions, msKg, miKg, totalBiomass };
-  }, [digestate, agronomic, mixture, biomass]);
+export default function App() {
+  const [mode, setMode] = useState<AppMode>('home');
 
-  const sensitivityR = useMemo(() => {
-    const data = [];
-    for (let r = 1; r <= 20; r++) {
-      const mtKg = results.mtTons * 1000;
-      const ms = mixture.vsInoculum > 0 ? mtKg / (1 + (r * mixture.vsSludge) / mixture.vsInoculum) : 0;
-      const tsS = (ms * mixture.tsSludge) / 100;
-      const b = (biomass.sludgeProductionRate > 0 && biomass.fcr > 0) ? (tsS / biomass.sludgeProductionRate) / biomass.fcr : 0;
-      data.push({ x: r, biomass: Math.round(b) });
-    }
-    return data;
-  }, [results.mtTons, mixture, biomass]);
+  if (mode === 'spreading') {
+    return (
+      <div className="relative">
+        <button 
+          onClick={() => setMode('home')}
+          className="fixed bottom-6 left-6 z-50 bg-slate-950 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-slate-900 transition-all text-sm font-bold border border-white/10"
+        >
+          <LayoutDashboard className="w-4 h-4" />
+          Torna alla Home
+        </button>
+        <AppSpreading />
+      </div>
+    );
+  }
 
-  const handleInputChange = (setter: any, field: string, value: string) => {
-    const numValue = parseFloat(value) || 0;
-    setter((prev: any) => {
-      const newState = { ...prev, [field]: numValue };
-      if (field === 'tsSludge') newState.vsSludge = parseFloat((numValue * 0.75).toFixed(2));
-      return newState;
-    });
-  };
+  if (mode === 'area') {
+    return (
+      <div className="relative">
+        <button 
+          onClick={() => setMode('home')}
+          className="fixed bottom-6 left-6 z-50 bg-emerald-900 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-emerald-800 transition-all text-sm font-bold"
+        >
+          <LayoutDashboard className="w-4 h-4" />
+          Torna alla Home
+        </button>
+        <AppArea />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="bg-emerald-100 p-2 rounded-xl"><Fish className="w-6 h-6 text-emerald-600" /></div>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">RAS AD-Sludge Biomass</h1>
-            <p className="text-xs text-slate-500 font-medium">Modello Sostenibilità RAS</p>
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center p-6 py-12 md:py-24">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-5xl w-full text-center space-y-16"
+      >
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase tracking-widest">
+            <Fish className="w-4 h-4" />
+            RAS AD-Sludge Spreading Suite
           </div>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 space-y-6">
-          <section className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4"><Droplets className="w-4 h-4 text-blue-500" /><h2 className="text-sm font-bold text-slate-800 uppercase">Digestato</h2></div>
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className="label-text">TS (%)</label><input type="number" step="0.1" value={digestate.tsPercent} onChange={(e) => handleInputChange(setDigestate, 'tsPercent', e.target.value)} className="input-field" /></div>
-              <div><label className="label-text">N tot (% TS)</label><input type="number" step="0.1" value={digestate.nTotPercentTS} onChange={(e) => handleInputChange(setDigestate, 'nTotPercentTS', e.target.value)} className="input-field" /></div>
-            </div>
-          </section>
-          <section className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4"><Leaf className="w-4 h-4 text-emerald-500" /><h2 className="text-sm font-bold text-slate-800 uppercase">Agronomico</h2></div>
-            <div className="space-y-4">
-              <div><label className="label-text">Carico Max N (kg/ha)</label><input type="number" value={agronomic.maxNitrogenLoad} onChange={(e) => handleInputChange(setAgronomic, 'maxNitrogenLoad', e.target.value)} className="input-field" /></div>
-            </div>
-          </section>
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight">
+            Gestione Sostenibile <br /> <span className="text-emerald-600">Fanghi RAS</span>
+          </h1>
+          <p className="text-slate-500 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            Strumenti avanzati per l'integrazione tra acquacoltura a ricircolo (RAS), digestione anaerobica e spandimento agronomico.
+          </p>
         </div>
 
-        <div className="lg:col-span-8 space-y-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-950 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden border border-white/10"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.button
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setMode('spreading')}
+            className="glass-card p-10 text-left group transition-all hover:border-emerald-500/50 hover:shadow-2xl relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 p-8 opacity-10"><Fish className="w-32 h-32" /></div>
-            <div className="relative z-10">
-              <span className="text-emerald-400 font-bold text-xs uppercase tracking-widest mb-2 block">Risultato Principale</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-2 text-white">
-                {Math.round(results.totalBiomass).toLocaleString()} <span className="text-xl font-normal text-slate-400 ml-2">kg/ha/anno</span>
-              </h2>
-              <p className="text-slate-300 text-sm max-w-md">Biomassa ittica massima gestibile rispettando il limite di {agronomic.maxNitrogenLoad} kg N/ha/anno.</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 pt-8 border-t border-white/10">
-                <div><span className="block text-[10px] text-slate-400 font-bold uppercase mb-1">Digestato Tot.</span><span className="text-lg font-mono font-bold text-white">{results.mtTons.toFixed(1)} t</span></div>
-                <div><span className="block text-[10px] text-slate-400 font-bold uppercase mb-1">Massa Fango</span><span className="text-lg font-mono font-bold text-white">{Math.round(results.msKg).toLocaleString()} kg</span></div>
-                <div><span className="block text-[10px] text-slate-400 font-bold uppercase mb-1">Interventi</span><span className="text-lg font-mono font-bold text-white">{results.minInterventions.toFixed(1)}</span></div>
-                <div><span className="block text-[10px] text-slate-400 font-bold uppercase mb-1">Massa Inoculo</span><span className="text-lg font-mono font-bold text-white">{Math.round(results.miKg).toLocaleString()} kg</span></div>
-              </div>
+            <div className="bg-emerald-100 w-14 h-14 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+              <Fish className="w-7 h-7 text-emerald-600 group-hover:text-white" />
             </div>
-          </motion.div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">RAS AD-Sludge Biomass</h3>
+            <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+              Ottimizza la produzione ittica. Calcola la biomassa massima sostenibile per ettaro rispettando i limiti di azoto (ZVN).
+            </p>
+            <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+              Inizia Calcolo <ArrowRight className="w-4 h-4" />
+            </div>
+          </motion.button>
 
-          <div className="glass-card p-6">
-            <h3 className="text-sm font-bold text-slate-800 mb-6">Sensibilità Rapporto R</h3>
-            <div className="h-48 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={sensitivityR}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="x" axisLine={false} tickLine={false} tick={{fontSize: 10}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10}} />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="biomass" stroke="#10b981" fill="#10b981" fillOpacity={0.1} strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
+          <motion.button
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setMode('area')}
+            className="glass-card p-10 text-left group transition-all hover:border-emerald-500/50 hover:shadow-2xl relative overflow-hidden"
+          >
+            <div className="bg-emerald-100 w-14 h-14 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+              <Map className="w-7 h-7 text-emerald-600 group-hover:text-white" />
             </div>
-          </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">RAS AD-Sludge Land</h3>
+            <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+              Pianifica il territorio. Determina la superficie agricola necessaria per assorbire i nutrienti prodotti dalla tua biomassa.
+            </p>
+            <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+              Analisi Territoriale <ArrowRight className="w-4 h-4" />
+            </div>
+          </motion.button>
         </div>
-      </main>
+
+        <div className="py-12 px-8 bg-slate-100 rounded-3xl border border-slate-200 text-center">
+          <p className="text-slate-600 font-medium">
+            Sviluppato nell'ambito del <span className="text-slate-900 font-bold">Progetto Circular Rainbow</span> — Università di Udine
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
