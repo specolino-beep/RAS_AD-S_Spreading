@@ -178,7 +178,7 @@ export default function AppSpreading() {
         <div className="lg:col-span-8 space-y-6">
           <motion.div 
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-800 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden border border-white/10"
+            className="bg-slate-700 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden border border-white/10"
           >
             <div className="absolute top-0 right-0 p-8 opacity-10"><Fish className="w-32 h-32" /></div>
             <div className="relative z-10">
@@ -265,4 +265,5 @@ export default function AppSpreading() {
     </div>
   );
 }
+
 
