@@ -26,7 +26,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'framer-motion';
 import { 
   DigestateParams, 
   AgronomicParams, 
@@ -517,3 +517,4 @@ export default function AppSpreading() {
     </div>
   );
 }
+
