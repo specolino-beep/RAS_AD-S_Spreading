@@ -19,7 +19,7 @@ export default function App() {
       <div className="relative">
         <button 
           onClick={() => setMode('home')}
-          className="fixed bottom-6 left-6 z-50 bg-brand-primary text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-brand-secondary transition-all text-sm font-bold"
+          className="fixed bottom-6 left-6 z-50 bg-slate-900 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-brand-secondary transition-all text-sm font-bold"
         >
           <LayoutDashboard className="w-4 h-4" />
           Torna alla Home
@@ -175,4 +175,5 @@ export default function App() {
     </div>
   );
 }
+
 
