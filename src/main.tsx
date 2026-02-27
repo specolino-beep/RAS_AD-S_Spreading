@@ -1,15 +1,10 @@
-@import "tailwindcss";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --color-accent: #10b981;
-}
-
-@layer base {
-  body { @apply bg-slate-50 text-slate-900 font-sans antialiased; }
-}
-
-.glass-card { @apply bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden; }
-.input-field { @apply w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all text-sm font-medium; }
-.label-text { @apply block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5; }
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
