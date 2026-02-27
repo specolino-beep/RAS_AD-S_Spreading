@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { LayoutDashboard, Maximize, Map, Fish, ArrowRight, Info, Mail, Globe, ShieldCheck } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'framer-motion';
 import AppSpreading from './AppSpreading';
 import AppArea from './AppArea';
 
@@ -175,3 +175,4 @@ export default function App() {
     </div>
   );
 }
+
