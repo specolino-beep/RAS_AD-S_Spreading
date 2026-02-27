@@ -1,11 +1,6 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { LayoutDashboard, Maximize, Map, Fish, ArrowRight, Info, Mail, Globe, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import AppSpreading from './AppSpreading';
 import AppArea from './AppArea';
 
@@ -19,7 +14,7 @@ export default function App() {
       <div className="relative">
         <button 
           onClick={() => setMode('home')}
-          className="fixed bottom-6 left-6 z-50 bg-slate-900 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-slate-800 transition-all text-sm font-bold"
+          className="fixed bottom-6 left-6 z-50 bg-slate-950 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-slate-900 transition-all text-sm font-bold border border-white/10"
         >
           <LayoutDashboard className="w-4 h-4" />
           Torna alla Home
@@ -175,6 +170,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
