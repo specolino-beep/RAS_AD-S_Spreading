@@ -99,12 +99,13 @@ export default function App() {
 
         <div className="py-12 px-8 bg-slate-100 rounded-3xl border border-slate-200 text-center">
           <p className="text-slate-600 font-medium">
-            Sito in fase Prototipo<span className="text-slate-900 font-bold">francesco.daborso@uniud.it</span> — Università di Udine
+            Sito in fase Prototipo - <span className="text-slate-900 font-bold">francesco.daborso@uniud.it</span> - Università di Udine
           </p>
         </div>
       </motion.div>
     </div>
   );
 }
+
 
 
